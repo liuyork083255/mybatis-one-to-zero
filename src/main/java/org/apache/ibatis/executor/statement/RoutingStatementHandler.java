@@ -34,18 +34,26 @@ import org.apache.ibatis.session.RowBounds;
  */
 public class RoutingStatementHandler implements StatementHandler {
 
+  /**
+   * 真正的 StatementHandler
+   * 这里采用了一种适配器模式
+   * 因为下面的核心方法都是通过这个 delegate 来调用
+   */
   private final StatementHandler delegate;
 
   public RoutingStatementHandler(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
 
     switch (ms.getStatementType()) {
       case STATEMENT:
+        /* 对应 Executor 的 SIMPLE 类型 */
         delegate = new SimpleStatementHandler(executor, ms, parameter, rowBounds, resultHandler, boundSql);
         break;
       case PREPARED:
+        /* 对应 Executor 的 REUSE 类型 */
         delegate = new PreparedStatementHandler(executor, ms, parameter, rowBounds, resultHandler, boundSql);
         break;
       case CALLABLE:
+        /* 对应 Executor 的 BATCH 类型 */
         delegate = new CallableStatementHandler(executor, ms, parameter, rowBounds, resultHandler, boundSql);
         break;
       default:

@@ -90,7 +90,9 @@ public class XMLMapperBuilder extends BaseBuilder {
   }
 
   public void parse() {
+    /* 判断当前资源是否被加载过 */
     if (!configuration.isResourceLoaded(resource)) {
+      /* 从 XxxMapper.xml 文件的 mapper 节点开始解析*/
       configurationElement(parser.evalNode("/mapper"));
       configuration.addLoadedResource(resource);
       bindMapperForNamespace();
@@ -107,17 +109,34 @@ public class XMLMapperBuilder extends BaseBuilder {
 
   private void configurationElement(XNode context) {
     try {
+      /* 读取 namespace 属性值，如果为 null 或者为空，则抛出异常 */
       String namespace = context.getStringAttribute("namespace");
       if (namespace == null || namespace.equals("")) {
         throw new BuilderException("Mapper's namespace cannot be empty");
       }
+
       builderAssistant.setCurrentNamespace(namespace);
+      /*
+       * 解析cache-ref标签
+       * 其他命名空间缓存配置的引用
+       */
       cacheRefElement(context.evalNode("cache-ref"));
+
+      /* 解析cache标签 */
       cacheElement(context.evalNode("cache"));
+
+      /* 解析/mapper/parameterMap标签 */
       parameterMapElement(context.evalNodes("/mapper/parameterMap"));
+
+      /* 解析/mapper/resultMap标签 */
       resultMapElements(context.evalNodes("/mapper/resultMap"));
+
+      /* 解析/mapper/sql标签 */
       sqlElement(context.evalNodes("/mapper/sql"));
+
+      /* 解析select|insert|update|delete标签 */
       buildStatementFromContext(context.evalNodes("select|insert|update|delete"));
+
     } catch (Exception e) {
       throw new BuilderException("Error parsing Mapper XML. The XML location is '" + resource + "'. Cause: " + e, e);
     }
@@ -188,8 +207,11 @@ public class XMLMapperBuilder extends BaseBuilder {
 
   private void cacheRefElement(XNode context) {
     if (context != null) {
+      /* 将mapper标签的的namespace作为key,<cache-ref>的namespace作为value存放Configuration对象的cacheRefMap中 */
       configuration.addCacheRef(builderAssistant.getCurrentNamespace(), context.getStringAttribute("namespace"));
+
       CacheRefResolver cacheRefResolver = new CacheRefResolver(builderAssistant, context.getStringAttribute("namespace"));
+
       try {
         cacheRefResolver.resolveCacheRef();
       } catch (IncompleteElementException e) {

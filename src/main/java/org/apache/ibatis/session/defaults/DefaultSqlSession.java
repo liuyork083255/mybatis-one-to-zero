@@ -44,10 +44,16 @@ import org.apache.ibatis.session.SqlSession;
  * Note that this class is not Thread-Safe.
  *
  * @author Clinton Begin
+ * one-to-zero:
+ *  SqlSession 的默认实现，该类主要提供操作数据库的方法给开发人员使用
  */
 public class DefaultSqlSession implements SqlSession {
 
   private final Configuration configuration;
+  /**
+   * sqlSession 核心组件之一 执行器
+   * 在创建sqlSession 的时候会传入执行器
+   */
   private final Executor executor;
 
   private final boolean autoCommit;

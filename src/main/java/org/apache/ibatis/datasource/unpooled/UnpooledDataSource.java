@@ -39,7 +39,15 @@ import org.apache.ibatis.io.Resources;
 public class UnpooledDataSource implements DataSource {
 
   private ClassLoader driverClassLoader;
+  /**
+   * 如果在配置文件中使用类似：
+   *  <property name="driver.jdbc" value="com.mysql.jdbc.Driver" />
+   * 则会存入这个 driverProperties 中
+   *  key：jdbc
+   *  value：com.mysql.jdbc.Driver
+   */
   private Properties driverProperties;
+
   private static Map<String, Driver> registeredDrivers = new ConcurrentHashMap<>();
 
   private String driver;
@@ -194,7 +202,7 @@ public class UnpooledDataSource implements DataSource {
   /**
    * Sets the default network timeout value to wait for the database operation to complete. See {@link Connection#setNetworkTimeout(java.util.concurrent.Executor, int)}
    * 
-   * @param milliseconds
+   * @param defaultNetworkTimeout
    *          The time in milliseconds to wait for the database operation to complete.
    * @since 3.5.2
    */
@@ -202,7 +210,11 @@ public class UnpooledDataSource implements DataSource {
     this.defaultNetworkTimeout = defaultNetworkTimeout;
   }
 
+  /**
+   * 获取数据库连接
+   */
   private Connection doGetConnection(String username, String password) throws SQLException {
+    /* 将相关参数封装到 Properties 中 */
     Properties props = new Properties();
     if (driverProperties != null) {
       props.putAll(driverProperties);
@@ -216,18 +228,31 @@ public class UnpooledDataSource implements DataSource {
     return doGetConnection(props);
   }
 
+  /**
+   * 可以看出：
+   *    Unpooled DataSource 获取连接每次都是新建
+   *    如果频繁创建是一件比较耗费资源的事情
+   */
   private Connection doGetConnection(Properties properties) throws SQLException {
+    /* 初始化驱动 */
     initializeDriver();
+    /* 从 DriverManager 中获取连接，获取新的 Connection 对象 */
     Connection connection = DriverManager.getConnection(url, properties);
+    /* 配置connection属性 */
     configureConnection(connection);
+
     return connection;
   }
 
+  /**
+   * 初始化驱动
+   */
   private synchronized void initializeDriver() throws SQLException {
     if (!registeredDrivers.containsKey(driver)) {
       Class<?> driverType;
       try {
         if (driverClassLoader != null) {
+          /* java 原生类加载初始化 */
           driverType = Class.forName(driver, true, driverClassLoader);
         } else {
           driverType = Resources.classForName(driver);
@@ -244,12 +269,15 @@ public class UnpooledDataSource implements DataSource {
   }
 
   private void configureConnection(Connection conn) throws SQLException {
+    /* 超时配置 */
     if (defaultNetworkTimeout != null) {
       conn.setNetworkTimeout(Executors.newSingleThreadExecutor(), defaultNetworkTimeout);
     }
+    /* 自动提交配置 */
     if (autoCommit != null && autoCommit != conn.getAutoCommit()) {
       conn.setAutoCommit(autoCommit);
     }
+    /* 事务隔离级别配置 */
     if (defaultTransactionIsolationLevel != null) {
       conn.setTransactionIsolation(defaultTransactionIsolationLevel);
     }

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--具体的说明可以参考官网：http://www.mybatis.org/mybatis-3/zh/configuration.html-->
+
+
+    <!-- 加载数据库属性文件 然后下面配置就可以使用 ${xxx.yyy} -->
+    <!-- properties 标签可以引入一个文件，不引入直接去掉 resource 或者 url 属性即可 -->
+    <!-- 但是引入文件的key和里面的 property 节点属性重复，则子节点 property 会被覆盖，已文件引入为主 -->
+    <properties resource="jdbc.properties">
+        <!--如果jdbc.properties文件中也有 username 这个key，则下面节点会被覆盖-->
+        <property name="username" value="LiuYork" />
+    </properties>
+
+    <!-- 这是 MyBatis 中极为重要的调整设置，它们会改变 MyBatis 的运行时行为，具体配置详见官网：http://www.mybatis.org/mybatis-3/zh/configuration.html#settings -->
+    <settings>
+        <setting name="" value=""/>
+    </settings>
+
+    <typeAliases>
+        <typeAlias type="liu.york.demo.demo1.Demo1User" alias="demo1User" />
+        <!-- 它还有一个 <package name="com.ys.po" /> 标签，在没有注解的情况下，会使用 Bean 的首字母小写的非限定类名来作为它的别名 -->
+        <!-- 这两个标签可以共存。但是<typeAliases />标签一定要在 <package />标签的前面。因为一个类可以有多个别名，所以这时候两个标签设置的名称都有效。 -->
+        <typeAlias type="" alias="" />
+        <package name=""/>
+    </typeAliases>
+
+    <!--Java数据类型和数据库数据类型是有区别的，而我们想通过Java代码来操作数据库或从数据库中取值的时候，必须要进行类型的转换。而  typeHandlers 便是来完成这一工作的-->
+    <!--mybatis也为我们提供了许多内置的类型处理器，具体可以参考官网:http://www.mybatis.org/mybatis-3/zh/configuration.html#typeHandlers-->
+    <typeHandlers>
+        <typeHandler handler="" javaType="" jdbcType="" />
+        <!-- package 标签必须放在后面 -->
+        <package name="" />
+    </typeHandlers>
+
+    <!-- 类型别名是为 Java 类型设置一个短的名字。 它只和 XML 配置有关，存在的意义仅在于用来减少类完全限定名的冗余 详见官网：http://www.mybatis.org/mybatis-3/zh/configuration.html#typeAliases -->
+    <plugins>
+        <plugin interceptor="liu.york.mybatis.study.plugin.MyInterceptor">
+            <property name="username" value="LiuYork"/>
+            <property name="password" value="123456"/>
+        </plugin>
+    </plugins>
+
+    <!--<typeHandlers>-->
+        <!--<typeHandler handler="liu.york.mybatis.study.typeHandler.MyTypeHandler" javaType="java.lang.String" jdbcType="VARCHAR" />-->
+    <!--</typeHandlers>-->
+
+    <!-- 可以配置多个运行环境，但是每个 SqlSessionFactory 实例只能选择一个运行环境 -->
+    <!--默认采用的一个db环境 如果没有找到，则会报错-->
+    <environments default="db1">
+        <environment id="db1">
+            <transactionManager type="JDBC" />
+            <!-- mybatis 支持三种数据源类型 UNPOOLED | POOLED | JNDI -->
+            <!--JNDI：    这个数据源的实现是为了能在如 EJB 或应用服务器这类容器中使用，容器可以集中或在外部配置数据源，然后放置一个 JNDI 上下文的引用-->
+            <!--POOLED：  使用连接池，这种数据源的实现利用“池”的概念将 JDBC 连接对象组织起来，避免了创建新的连接实例时所必需的初始化和认证时间-->
+            <!--UNPOOLED：不使用连接池，这个数据源的实现只是每次被请求时打开和关闭连接-->
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver" />
+                <property name="url" value="jdbc:mysql://localhost:3306/mybatis-one-to-zero1" />
+                <property name="username" value="root" />
+                <property name="password" value="123456" />
+            </dataSource>
+        </environment>
+
+        <environment id="db2">
+            <transactionManager type="JDBC" />
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver" />
+                <property name="url" value="jdbc:mysql://localhost:3306/mybatis-one-to-zero2" />
+                <property name="username" value="root" />
+                <property name="password" value="123456" />
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!-- mapping 文件路径配置 -->
+    <!--在原生的 mybatis 中是不支持扫描 mapper 注解的，因为 @MapperScan 是 mybatis-spring 中的-->
+    <mappers>
+        <!--这三个标签有且仅有一个有值，其余两个都为 null，才能正常执行-->
+        <mapper class="" url="" resource="UserMapper.xml" />
+        <!-- mapper子标签必须在package标签前面 -->
+        <package name="" />
+    </mappers>
+
+</configuration>

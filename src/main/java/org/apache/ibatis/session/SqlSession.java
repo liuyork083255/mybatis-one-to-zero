@@ -28,6 +28,26 @@ import org.apache.ibatis.executor.BatchResult;
  * Through this interface you can execute commands, get mappers and manage transactions.
  *
  * @author Clinton Begin
+ * one-to-zero:
+ *  SqlSession 是 mybatis 和数据库打交道的枢纽类，主要提供了 增删改查(CRUD) 操作，同时还有回滚-提交操作
+ *  在老版本中mybatis建议使用 sqlSession 直接调用增删改查接口操作数据库，但是新版本中建议采用 mapper 接口方法调用
+ *  但是mapper采用的动态代理底层还是通过 sqlSession 实现的
+ *
+ *  SqlSession 重要的四个对象
+ *    1 {@link org.apache.ibatis.executor.Executor}：
+ *        度执行 StatementHandler、ParmmeterHandler、ResultHandler 执行相应的SQL语句；
+ *　　2 {@link org.apache.ibatis.executor.statement.StatementHandler}：
+ *        使用数据库中Statement（PrepareStatement）执行操作，即底层是封装好了的 prepareStatement；
+ *　　3 {@link org.apache.ibatis.executor.parameter.ParameterHandler}：
+ *        处理SQL参数；
+ *　　4 {@link ResultHandler}：
+ *        结果集 ResultSet 封装处理返回。
+ *
+ *
+ *
+ *
+ *
+ *
  */
 public interface SqlSession extends Closeable {
 

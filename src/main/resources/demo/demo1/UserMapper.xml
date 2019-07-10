@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="liu.york.demo.demo1.Demo1UserMapper" >
+
+    <select id="selectUser"  resultType="liu.york.demo.demo1.Demo1User">
+        select * from user
+    </select>
+    
+</mapper>

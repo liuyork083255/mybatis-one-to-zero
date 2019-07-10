@@ -30,22 +30,45 @@ import org.apache.ibatis.session.SqlSession;
  * @author Clinton Begin
  * @author Eduardo Macarron
  * @author Lasse Voss
+ *
+ * opne-to-zero:
+ *  这个类通过名字就可以看出：是用来注册 Mapper 接口与获取生成代理类实例的工具类
+ *
  */
 public class MapperRegistry {
 
+  /** 全局配置文件对象 */
   private final Configuration config;
+
+  /**
+   * 一个HashMap
+   *  Key：mapper 的类型对象
+   *  Value：MapperProxyFactory 对象
+   */
   private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<>();
 
   public MapperRegistry(Configuration config) {
     this.config = config;
   }
 
+  /**
+   * 获取生成的代理对象
+   * @param type    mapper 的类型对象
+   * @param sqlSession  sqlSession
+   * @param <T> mapper 的类型对象
+   */
   @SuppressWarnings("unchecked")
   public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
+    /* 通过Mapper的接口类型 去Map当中查找 如果为空就抛异常 */
     final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
+
     if (mapperProxyFactory == null) {
       throw new BindingException("Type " + type + " is not known to the MapperRegistry.");
     }
+
+    /*
+     * 不为空则创建一个当前接口的代理对象 并且传入 sqlSession
+     */
     try {
       return mapperProxyFactory.newInstance(sqlSession);
     } catch (Exception e) {
@@ -57,8 +80,13 @@ public class MapperRegistry {
     return knownMappers.containsKey(type);
   }
 
+  /**
+   * 注册Mapper接口
+   * 这个方法在解析xml的时候被调用
+   */
   public <T> void addMapper(Class<T> type) {
     if (type.isInterface()) {
+      /* 如果两个子标签同时存在，前面解析完mapper标签后，存在相同的接口名，会抛出异常 */
       if (hasMapper(type)) {
         throw new BindingException("Type " + type + " is already known to the MapperRegistry.");
       }

@@ -29,6 +29,18 @@ import org.apache.ibatis.transaction.Transaction;
 
 /**
  * @author Clinton Begin
+ * one-to-zero:
+ *  Executor 是真正执行Java与数据库交互的类
+ *  执行器有三种 {@link org.apache.ibatis.session.ExecutorType}
+ *  其作用：
+ *    Executor 会先调用 StatementHandler的 prepare() 方法预编译SQL语句，同时设置一些基本的运行参数，
+ *    然后调用 StatementHandler的parameterize()方法（实际上是启用了ParameterHandler设置参数）设置参数，
+ *    resultHandler 再组装查询结果返回调用者完成一次查询完成预编译
+ *    简单总结起来就是即先预编译SQL语句，之后设置参数，最后如果有查询结果就会组装返回
+ *
+ *  执行器的创建是在 {@link org.apache.ibatis.session.Configuration#newExecutor}
+ *
+ *
  */
 public interface Executor {
 

@@ -41,7 +41,18 @@ public abstract class BaseStatementHandler implements StatementHandler {
   protected final Configuration configuration;
   protected final ObjectFactory objectFactory;
   protected final TypeHandlerRegistry typeHandlerRegistry;
+
+  /**
+   * 结果处理器也会在 StatementHandler 中
+   * StatementHandler 内部会封装好 {@link java.sql.PreparedStatement} 对象，这个对象就是和数据库交互
+   * 执行完成后会将执行结果交给 ResultSetHandler 处理
+   */
   protected final ResultSetHandler resultSetHandler;
+  /**
+   * sqlSession 会通过 Executor 中调用 StatementHandler 完成一些与数据库连接的相关参数配置
+   * 但是sql语句的参数则是通过 StatementHandler 中的 ParameterHandler 来完成的，所以 StatementHandler 会包含 parameterHandler 对象
+   * 调用机制还是通过 Executor 来调用
+   */
   protected final ParameterHandler parameterHandler;
 
   protected final Executor executor;
@@ -98,6 +109,9 @@ public abstract class BaseStatementHandler implements StatementHandler {
     }
   }
 
+  /**
+   * instantiateStatement()预编译实际上也是使用了JDBC的prepareStatement()完成预编译
+   */
   protected abstract Statement instantiateStatement(Connection connection) throws SQLException;
 
   protected void setStatementTimeout(Statement stmt, Integer transactionTimeout) throws SQLException {

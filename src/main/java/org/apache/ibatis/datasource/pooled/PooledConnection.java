@@ -25,6 +25,8 @@ import org.apache.ibatis.reflection.ExceptionUtil;
 
 /**
  * @author Clinton Begin
+ * one-to-zero:
+ *  mybatis 会将 java.sql.Connection 封装成一个 PooledConnection 对象
  */
 class PooledConnection implements InvocationHandler {
 
@@ -32,13 +34,33 @@ class PooledConnection implements InvocationHandler {
   private static final Class<?>[] IFACES = new Class<?>[] { Connection.class };
 
   private final int hashCode;
+
   private final PooledDataSource dataSource;
+  /**
+   * 真实的连接对象
+   */
   private final Connection realConnection;
+
+  /**
+   * 代理连接对象 {@link #invoke(Object, Method, Object[])}
+   */
   private final Connection proxyConnection;
+
+  /**
+   * 检查超时时间戳
+   *
+   */
   private long checkoutTimestamp;
+
   private long createdTimestamp;
+
   private long lastUsedTimestamp;
+
   private int connectionTypeCode;
+
+  /**
+   * 标记当前连接是否有效
+   */
   private boolean valid;
 
   /**
@@ -232,6 +254,12 @@ class PooledConnection implements InvocationHandler {
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     String methodName = method.getName();
+    /**
+     * 回收核心逻辑
+     * mybatis 对于从 pooled 中获取连接，返回的并不是这个连接的真实对象，而是这个连接的代理对象 {@link #getProxyConnection()}
+     * 所以用户获取的都是 {@link proxyConnection} 对象，并且这里对 close 方法进行了代理，逻辑就是不关闭连接，
+     * 而是调用 {@link PooledDataSource#pushConnection} 方法将之存入 {@link PoolState#idleConnections} 集合中
+     */
     if (CLOSE.hashCode() == methodName.hashCode() && CLOSE.equals(methodName)) {
       dataSource.pushConnection(this);
       return null;
@@ -242,6 +270,7 @@ class PooledConnection implements InvocationHandler {
         // throw an SQLException instead of a Runtime
         checkConnection();
       }
+      /* 真正调用代理对象的相关方法 */
       return method.invoke(realConnection, args);
     } catch (Throwable t) {
       throw ExceptionUtil.unwrapThrowable(t);

@@ -27,26 +27,31 @@ import org.apache.ibatis.session.ResultHandler;
 
 /**
  * @author Clinton Begin
+ * one-to-zero:
+ *  数据库会话器
+ *  使用数据库中 Statement（PrepareStatement）执行操作，即底层是封装好了的 prepareStatement
+ *  简单来说就是专门处理数据库会话；详细来说就是进行预编译并且调用 ParameterHandler 的setParameters()方法设置参数
+ *
+ *  数据库会话器主要有三种：
+ *    SimpleStatementHandler、PrepareStatementHandler、CallableStatementHandler，分别对应 Executor 的三种执行器（SIMPLE、REUSE、BATCH）
+ *
  */
 public interface StatementHandler {
 
-  Statement prepare(Connection connection, Integer transactionTimeout)
-      throws SQLException;
+  Statement prepare(Connection connection, Integer transactionTimeout) throws SQLException;
 
-  void parameterize(Statement statement)
-      throws SQLException;
+  /**
+   * 设置 sql 语句参数
+   */
+  void parameterize(Statement statement) throws SQLException;
 
-  void batch(Statement statement)
-      throws SQLException;
+  void batch(Statement statement) throws SQLException;
 
-  int update(Statement statement)
-      throws SQLException;
+  int update(Statement statement) throws SQLException;
 
-  <E> List<E> query(Statement statement, ResultHandler resultHandler)
-      throws SQLException;
+  <E> List<E> query(Statement statement, ResultHandler resultHandler) throws SQLException;
 
-  <E> Cursor<E> queryCursor(Statement statement)
-      throws SQLException;
+  <E> Cursor<E> queryCursor(Statement statement) throws SQLException;
 
   BoundSql getBoundSql();
 

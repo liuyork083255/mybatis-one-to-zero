@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="liu.york.demo.demo1.Demo1UserMapper" >
+
+    <!-- 给定命名空间的缓存配置 -->
+    <cache />
+
+    <!-- 其他命名空间缓存配置的引用 -->
+    <cache-ref namespace=""/>
+
+    <!-- 已废弃！老式风格的参数映射。内联参数是首选,这个元素可能在将来被移除，这里不会记录 -->
+    <parameterMap id="" type="" />
+
+    <!-- 是最复杂也是最强大的元素，用来描述如何从数据库结果集中来加载对象 -->
+    <resultMap id="" type="" />
+
+    <!-- 可被其他语句引用的可重用语句块 -->
+    <sql id="" />
+
+    <insert id="" />
+    <delete id="" />
+    <update id="" />
+    <select id="" />
+
+</mapper>

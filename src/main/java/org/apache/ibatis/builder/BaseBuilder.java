@@ -108,6 +108,9 @@ public abstract class BaseBuilder {
     }
   }
 
+  /**
+   * 从 {@link #typeAliasRegistry} 中根据 key 类型获取指定的类对象
+   */
   protected <T> Class<? extends T> resolveClass(String alias) {
     if (alias == null) {
       return null;

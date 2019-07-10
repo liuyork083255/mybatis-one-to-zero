@@ -28,12 +28,20 @@ import org.apache.ibatis.session.SqlSession;
 /**
  * @author Clinton Begin
  * @author Eduardo Macarron
+ * one-to-zero:
+ *  实现了JDK动态代理的接口 InvocationHandler
+ *  在invoke方法中实现了代理方法调用的细节
  */
 public class MapperProxy<T> implements InvocationHandler, Serializable {
 
   private static final long serialVersionUID = -6424540398559729838L;
+
   private final SqlSession sqlSession;
+
+  /** 接口的类型对象 */
   private final Class<T> mapperInterface;
+
+  /** 接口中方法的缓存 由 MapperProxyFactory 传递过来的 */
   private final Map<Method, MapperMethod> methodCache;
 
   public MapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map<Method, MapperMethod> methodCache) {
@@ -42,12 +50,17 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
     this.methodCache = methodCache;
   }
 
+  /**
+   * 接口代理对象所有的方法调用 都会调用该方法
+   */
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     try {
+      /* 判断是不是基础方法 比如toString() hashCode()等，这些方法直接调用不需要处理 */
       if (Object.class.equals(method.getDeclaringClass())) {
         return method.invoke(this, args);
       } else if (method.isDefault()) {
+        /* 如果是 default 方法 */
         return invokeDefaultMethod(proxy, method, args);
       }
     } catch (Throwable t) {
@@ -61,18 +74,16 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
     return methodCache.computeIfAbsent(method, k -> new MapperMethod(mapperInterface, method, sqlSession.getConfiguration()));
   }
 
-  private Object invokeDefaultMethod(Object proxy, Method method, Object[] args)
-      throws Throwable {
-    final Constructor<MethodHandles.Lookup> constructor = MethodHandles.Lookup.class
-        .getDeclaredConstructor(Class.class, int.class);
+  private Object invokeDefaultMethod(Object proxy, Method method, Object[] args) throws Throwable {
+
+    final Constructor<MethodHandles.Lookup> constructor = MethodHandles.Lookup.class.getDeclaredConstructor(Class.class, int.class);
     if (!constructor.isAccessible()) {
       constructor.setAccessible(true);
     }
     final Class<?> declaringClass = method.getDeclaringClass();
-    return constructor
-        .newInstance(declaringClass,
-            MethodHandles.Lookup.PRIVATE | MethodHandles.Lookup.PROTECTED
-                | MethodHandles.Lookup.PACKAGE | MethodHandles.Lookup.PUBLIC)
-        .unreflectSpecial(method, declaringClass).bindTo(proxy).invokeWithArguments(args);
+    return constructor.newInstance(
+            declaringClass,
+            MethodHandles.Lookup.PRIVATE | MethodHandles.Lookup.PROTECTED | MethodHandles.Lookup.PACKAGE | MethodHandles.Lookup.PUBLIC).
+            unreflectSpecial(method, declaringClass).bindTo(proxy).invokeWithArguments(args);
   }
 }

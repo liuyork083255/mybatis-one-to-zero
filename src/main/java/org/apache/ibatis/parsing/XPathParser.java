@@ -226,6 +226,10 @@ public class XPathParser {
     }
   }
 
+  /**
+   * 这段代码不用深究，只需要知道这是将 mybatis-configuration.xml 文件解析成 org.w3c.dom.Document 对象，
+   * 并将 Document 对象存储在 XPathParser 对象中便于后面解析
+   */
   private Document createDocument(InputSource inputSource) {
     // important: this must only be called AFTER common constructor
     try {

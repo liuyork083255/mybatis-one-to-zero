@@ -87,13 +87,27 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     return configuration;
   }
 
+  /**
+   *
+   * @param execType  执行类型，ExecutorType主要有三种类型：SIMPLE, REUSE, BATCH，默认是SIMPLE，都在枚举类ExecutorType里面
+   * @param level 事务隔离级别，都在枚举类TransactionIsolationLevel中定义
+   * @param autoCommit  是否自动提交，主要是事务提交的设置
+   * @return
+   */
   private SqlSession openSessionFromDataSource(ExecutorType execType, TransactionIsolationLevel level, boolean autoCommit) {
     Transaction tx = null;
     try {
+      /* 获取配置信息里面的环境信息，这些环境信息都是包括使用哪种数据库，连接数据库的信息，事务 */
       final Environment environment = configuration.getEnvironment();
+
+      /* 根据环境信息关于数据库的配置获取数据源 */
       final TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);
+
+      /* 根据环境信息关于事务的配置获取事务工厂 */
       tx = transactionFactory.newTransaction(environment.getDataSource(), level, autoCommit);
+
       final Executor executor = configuration.newExecutor(tx, execType);
+
       return new DefaultSqlSession(configuration, executor, autoCommit);
     } catch (Exception e) {
       closeTransaction(tx); // may have fetched a connection so lets call close()

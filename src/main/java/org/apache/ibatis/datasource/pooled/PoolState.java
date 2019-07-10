@@ -25,15 +25,33 @@ public class PoolState {
 
   protected PooledDataSource dataSource;
 
+  /**
+   * 空闲(idle)状态
+   * 表示当前闲置的没有被使用的 PooledConnection 集合，调用 PooledDataSource 的getConnection()方法时，会优先从此集合中取 PooledConnection 对象
+   * 当用完一个 java.sql.Connection 对象时，MyBatis会将其包裹成 PooledConnection 对象放到此集合中
+   */
   protected final List<PooledConnection> idleConnections = new ArrayList<>();
+
+  /**
+   * 活动(active)状态
+   * 表示当前的连接正在被使用
+   * 调用 PooledDataSource 的getConnection()方法时，会优先从 idleConnections 集合中取 PooledConnection 对象；
+   * 如果没有，则看此集合是否已满，如果未满，PooledDataSource 会创建出一个PooledConnection，添加到此集合中，并返回
+   */
   protected final List<PooledConnection> activeConnections = new ArrayList<>();
+
   protected long requestCount = 0;
   protected long accumulatedRequestTime = 0;
   protected long accumulatedCheckoutTime = 0;
   protected long claimedOverdueConnectionCount = 0;
   protected long accumulatedCheckoutTimeOfOverdueConnections = 0;
   protected long accumulatedWaitTime = 0;
+
+  /**
+   * 记录因为没有连接可用导致等待的次数
+   */
   protected long hadToWaitCount = 0;
+
   protected long badConnectionCount = 0;
 
   public PoolState(PooledDataSource dataSource) {
