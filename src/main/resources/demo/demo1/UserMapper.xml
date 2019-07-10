@@ -3,7 +3,11 @@
 <mapper namespace="liu.york.demo.demo1.Demo1UserMapper" >
 
     <select id="selectUser"  resultType="liu.york.demo.demo1.Demo1User">
-        select * from user
+        select * from user where id = #{id}
     </select>
-    
+
+    <insert id="insertUser">
+        insert into user values(#{param1},#{param2},#{param3})
+    </insert>
+
 </mapper>

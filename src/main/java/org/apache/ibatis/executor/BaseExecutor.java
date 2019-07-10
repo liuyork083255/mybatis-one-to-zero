@@ -51,7 +51,11 @@ public abstract class BaseExecutor implements Executor {
 
   private static final Log log = LogFactory.getLog(BaseExecutor.class);
 
+  /**
+   * 执行器所属 sqlSession，既然是执行，那么就必然要有一个事务对象，这个事务可以是自动提交，也可以是手动提交
+   */
   protected Transaction transaction;
+
   protected Executor wrapper;
 
   protected ConcurrentLinkedQueue<DeferredLoad> deferredLoads;

@@ -30,6 +30,14 @@ import org.apache.ibatis.transaction.TransactionFactory;
  * @author Clinton Begin
  *
  * @see ManagedTransaction
+ *
+ * one-to-zero:
+ *  这个配置几乎没做什么。它从来不提交或回滚一个连接，而是让容器来管理事务的整个生命周期（比如 JEE 应用服务器的上下文）。
+ *  默认情况下它会关闭连接，然而一些容器并不希望这样，因此需要将 closeConnection 属性设置为 false 来阻止它默认的关闭行为
+ *  例如：
+ *      <transactionManager type="MANAGED">
+ *         <property name="closeConnection" value="false"/>
+ *      </transactionManager>
  */
 public class ManagedTransactionFactory implements TransactionFactory {
 

@@ -30,13 +30,14 @@ import org.apache.ibatis.session.SqlSession;
 @SuppressWarnings("all")
 public class MapperProxyFactory<T> {
 
-  /** 具体Mapper接口的Class对象 */
+  /** 具体Mapper接口的Class对象，也就是该工厂要创建对象的类型 */
   private final Class<T> mapperInterface;
 
   /**
    * 该接口下面方法的缓存
    * key：方法对象
    * value：对接口中方法对象的封装
+   * 如果一个接口类有n个方法，那么map就会有n个
    */
   private final Map<Method, MapperMethod> methodCache = new ConcurrentHashMap<>();
 
@@ -52,6 +53,9 @@ public class MapperProxyFactory<T> {
     return methodCache;
   }
 
+  /**
+   * 为 mapper 类型创建代理类
+   */
   protected T newInstance(MapperProxy<T> mapperProxy) {
     /*
      * 可以发现，mybatis 使用的是 jdk 动态代理

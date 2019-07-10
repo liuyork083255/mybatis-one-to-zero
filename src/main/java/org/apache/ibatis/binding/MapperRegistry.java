@@ -41,9 +41,9 @@ public class MapperRegistry {
   private final Configuration config;
 
   /**
-   * 一个HashMap
+   * 一个HashMap，
    *  Key：mapper 的类型对象
-   *  Value：MapperProxyFactory 对象
+   *  Value：MapperProxyFactory mapper代理工厂对象
    */
   private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<>();
 
@@ -81,8 +81,8 @@ public class MapperRegistry {
   }
 
   /**
-   * 注册Mapper接口
-   * 这个方法在解析xml的时候被调用
+   * 注册 Mapper 接口
+   * 不管 mybatis 是单独使用还是和 spring 结合，启动初始化的时候都会调用这个方法将 mapper 添加进来
    */
   public <T> void addMapper(Class<T> type) {
     if (type.isInterface()) {

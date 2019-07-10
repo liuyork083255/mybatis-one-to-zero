@@ -27,23 +27,43 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
  * @author Clinton Begin
+ * one-to-zero:
+ *  对应 xml 片段：
+ *    <resultMap id="" type="liu.york.User">
+ *        <id     column="ID"                     property="id"  />
+ *        <result column="NAME"                   property="name"  />
+ *    </resultMap>
+ *
+ *
  */
 public class ResultMapping {
 
   private Configuration configuration;
+  /** 对应相应 JavaBean 中的成员变量 */
   private String property;
+  /** 对应节点的 column 属性， 对应检索出来的列名（别名） */
   private String column;
+  /** 对应节点的 javaType 属性 */
   private Class<?> javaType;
+  /** 对应节点的 jdbcType 属性， 表示映射列的JDBC属性 */
   private JdbcType jdbcType;
+  /** 类型处理器 */
   private TypeHandler<?> typeHandler;
+  /** 对应另一个 resultMap 的 id， 负责将结果集中的一部分映射成其他对象 */
   private String nestedResultMapId;
   private String nestedQueryId;
+  /** 对应节点的 notNullColumns 属性拆分后的结果 */
   private Set<String> notNullColumns;
+  /** 对应节点的 columnPrefix 属性 */
   private String columnPrefix;
+  /** 处理后的标记， 有两种：id和constructor */
   private List<ResultFlag> flags;
   private List<ResultMapping> composites;
+  /** 对应节点的 resultSet 属性 */
   private String resultSet;
+  /** 对应节点的 foreignColumn 属性 */
   private String foreignColumn;
+  /** 是否延迟加载， 对应节点的 fetchType 属性 */
   private boolean lazy;
 
   ResultMapping() {

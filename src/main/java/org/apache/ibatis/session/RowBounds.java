@@ -17,6 +17,13 @@ package org.apache.ibatis.session;
 
 /**
  * @author Clinton Begin
+ * one-to-zero:
+ *  mybatis 用来实现简单的分页类
+ *
+ *  如果要使用这种方式来实现分页，则：
+ *    public <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds)
+ *    第三个参数会被解析 {@link org.apache.ibatis.binding.MapperMethod.MethodSignature#getUniqueParamIndex}
+ *
  */
 public class RowBounds {
 

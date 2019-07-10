@@ -20,9 +20,14 @@ package org.apache.ibatis.mapping;
  * It creates the SQL that will be passed to the database out of the input parameter received from the user.
  *
  * @author Clinton Begin
+ * oen-to-zero:
+ *  负责根据用户传递的parameterObject，动态地生成SQL语句，将信息封装到BoundSql对象中，并返回
  */
 public interface SqlSource {
 
+  /**
+   * @param parameterObject 就是当前方法的参数，就是对应 xml-sql 语句所需要的参数
+   */
   BoundSql getBoundSql(Object parameterObject);
 
 }

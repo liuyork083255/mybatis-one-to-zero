@@ -44,7 +44,7 @@ import org.apache.ibatis.executor.BatchResult;
  *        结果集 ResultSet 封装处理返回。
  *
  *
- *
+ *  在和 spring 结合中，spring 使用的是 SqlSessionTemplate 类
  *
  *
  *

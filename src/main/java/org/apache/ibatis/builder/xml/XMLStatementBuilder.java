@@ -35,10 +35,18 @@ import org.apache.ibatis.session.Configuration;
 
 /**
  * @author Clinton Begin
+ * one-to-zero:
+ *  XMLStatementBuilder 对象，专门用于解析 select|insert|update|delete 标签的
+ *  比如 标签类型、属性resultMap、sql-body 等等
+ *  mapper.xml文件在mybatis中还是和spring结合都是必须的，所以这个类的解析是不可获取的
+ *
  */
 public class XMLStatementBuilder extends BaseBuilder {
 
   private final MapperBuilderAssistant builderAssistant;
+  /**
+   * 该属性就是记录标签的基本信息
+   */
   private final XNode context;
   private final String requiredDatabaseId;
 
@@ -54,17 +62,30 @@ public class XMLStatementBuilder extends BaseBuilder {
   }
 
   public void parseStatementNode() {
+    /* select|insert|update|delete 标签的id属性，也就是对应 mapper 接口的方法名 */
     String id = context.getStringAttribute("id");
-    String databaseId = context.getStringAttribute("databaseId");
 
+    /* 一般情况都是 null，因为很少在标签上指定数据库ID的 */
+    String databaseId = context.getStringAttribute("databaseId");
     if (!databaseIdMatchesCurrent(id, databaseId, this.requiredDatabaseId)) {
       return;
     }
 
+    /* 标签名称 */
     String nodeName = context.getNode().getNodeName();
+    /* 根据标签名称获取 sql 命令 type */
     SqlCommandType sqlCommandType = SqlCommandType.valueOf(nodeName.toUpperCase(Locale.ENGLISH));
+
+    /* 是否是 select 标签 */
     boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
+    /*
+     * 如果是查询标签默认不采用刷新缓存
+     * <select id="select"  resultType="xxx" flushCache="false|true"> ... </select>
+     */
     boolean flushCache = context.getBooleanAttribute("flushCache", !isSelect);
+    /*
+     * 默认使用缓存
+     */
     boolean useCache = context.getBooleanAttribute("useCache", isSelect);
     boolean resultOrdered = context.getBooleanAttribute("resultOrdered", false);
 
@@ -94,6 +115,11 @@ public class XMLStatementBuilder extends BaseBuilder {
     }
 
     SqlSource sqlSource = langDriver.createSqlSource(configuration, context, parameterTypeClass);
+
+    /*
+     * 获取 select|insert|update|delete 标签的属性，下面的属性命名并不是在四个标签中都存在的
+     * 下面最常见的就是 resultType resultMap
+     */
     StatementType statementType = StatementType.valueOf(context.getStringAttribute("statementType", StatementType.PREPARED.toString()));
     Integer fetchSize = context.getIntAttribute("fetchSize");
     Integer timeout = context.getIntAttribute("timeout");

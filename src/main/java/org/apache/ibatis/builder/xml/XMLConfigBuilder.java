@@ -90,6 +90,9 @@ public class XMLConfigBuilder extends BaseBuilder {
     this.parser = parser;
   }
 
+  /**
+   * 在和 spring-boot 结合后，由于没有 mybatis-config.xml 文件了，所以不会使用调用这个方法
+   */
   public Configuration parse() {
     if (parsed) {
       throw new BuilderException("Each XMLConfigBuilder can only be used once.");
@@ -542,6 +545,9 @@ public class XMLConfigBuilder extends BaseBuilder {
    */
   private void mapperElement(XNode parent) throws Exception {
     if (parent != null) {
+      /*
+       * 遍历 <mappers> 节点下面的每一个 <mapper> 节点
+       */
       for (XNode child : parent.getChildren()) {
         if ("package".equals(child.getName())) {
           String mapperPackage = child.getStringAttribute("name");
@@ -554,21 +560,48 @@ public class XMLConfigBuilder extends BaseBuilder {
           String url = child.getStringAttribute("url");
           String mapperClass = child.getStringAttribute("class");
 
+
           /*
            * 这三个标签有且仅有一个有值，其余两个都为 null，才能正常执行
+           * 即：
+           *  <mapper resource="demo/demo1/UserMapper.xml" /> 有效
+           *  <mapper resource="demo/demo1/UserMapper.xml" url="F://UserMapper.xml" /> 无效
+           *
+           * 但是在一个 mappers 标签下面可以有不同的类型
+           * 即：
+           * <mappers>
+           *   <mapper resource="demo/demo1/UserMapper.xml" />
+           *   <mapper url="file:///var/mappers/PostMapper.xml"/>
+           * </mappers>
+           *  是有效的
+           *
            */
+
+
+
+
+          /* 解析 resource 类型 */
           if (resource != null && url == null && mapperClass == null) {
             ErrorContext.instance().resource(resource);
             /* 获取 resource 指向目录的字节流，也就是获取 XxxMapper.xml 字节流 */
             InputStream inputStream = Resources.getResourceAsStream(resource);
-            /* 将 XxxMapper.xml 解析为 Document */
+
+            /* 将 XxxMapper.xml 解析为 Document，每一个 <mappers> 下面的 <mapper> 节点都会创建一个 XMLMapperBuilder 对象 */
             XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, resource, configuration.getSqlFragments());
+
+            /* 真正解析 mapper 文件 */
             mapperParser.parse();
+
+
+            /* 解析 url 类型，解析和 resource 一样 */
           } else if (resource == null && url != null && mapperClass == null) {
             ErrorContext.instance().resource(url);
             InputStream inputStream = Resources.getUrlAsStream(url);
             XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, url, configuration.getSqlFragments());
             mapperParser.parse();
+
+
+            /* 解析 class 类型 */
           } else if (resource == null && url == null && mapperClass != null) {
             Class<?> mapperInterface = Resources.classForName(mapperClass);
             configuration.addMapper(mapperInterface);

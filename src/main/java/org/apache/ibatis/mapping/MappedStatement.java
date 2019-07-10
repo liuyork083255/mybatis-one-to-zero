@@ -30,16 +30,28 @@ import org.apache.ibatis.session.Configuration;
 
 /**
  * @author Clinton Begin
+ * one-to-zero:
+ *  MappedStatement 维护了一条 <select|update|delete|insert> 节点的封装
+ *  比如 Mapper.xml
+ *      <select id="selectAuthorLinkedHashMap" resultType="java.util.LinkedHashMap">
+ *          select id, username from author where id = #{value}
+ *      </select>
+ *  转换成一个java类就是 MappedStatement
+ *  使用 {@link Configuration#getMappedStatement} 方法来获取 MappedStatement 对象
+ *
  */
 public final class MappedStatement {
 
+  /** demo/demo1/UserMapper.xml */
   private String resource;
   private Configuration configuration;
+  /** liu.york.demo.demo1.Demo1UserMapper.selectUser */
   private String id;
   private Integer fetchSize;
   private Integer timeout;
   private StatementType statementType;
   private ResultSetType resultSetType;
+  /** {@link org.apache.ibatis.scripting.defaults.RawSqlSource } */
   private SqlSource sqlSource;
   private Cache cache;
   private ParameterMap parameterMap;
@@ -47,6 +59,7 @@ public final class MappedStatement {
   private boolean flushCacheRequired;
   private boolean useCache;
   private boolean resultOrdered;
+  /** 当前标签类型 */
   private SqlCommandType sqlCommandType;
   private KeyGenerator keyGenerator;
   private String[] keyProperties;
@@ -294,8 +307,11 @@ public final class MappedStatement {
   }
 
   public BoundSql getBoundSql(Object parameterObject) {
+    /* 根据参数获取 BoundSql */
     BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
+
     List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
+
     if (parameterMappings == null || parameterMappings.isEmpty()) {
       boundSql = new BoundSql(configuration, boundSql.getSql(), parameterMap.getParameterMappings(), parameterObject);
     }

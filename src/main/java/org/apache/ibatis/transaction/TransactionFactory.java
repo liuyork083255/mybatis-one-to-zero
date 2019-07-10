@@ -26,6 +26,25 @@ import org.apache.ibatis.session.TransactionIsolationLevel;
  * Creates {@link Transaction} instances.
  *
  * @author Clinton Begin
+ * one-to-zero:
+ *    事务工厂
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *  注意：和数据源配置一样，通常项目中我们不会单独使用 mybatis 来管理事务。比如选择框架 Spring + mybatis，
+ *  这时候没有必要配置事务管理器， 因为 Spring 模块会使用自带的管理器来覆盖前面的配置
  */
 public interface TransactionFactory {
 

@@ -146,9 +146,17 @@ public class DefaultSqlSession implements SqlSession {
     return this.selectList(statement, parameter, RowBounds.DEFAULT);
   }
 
+  /**
+   *
+   * @param statement   类全名 + 方法名称： liu.york.UserMapper.selectUser
+   * @param parameter   进行重新设置过后的参数别名，一般都是 map 类型，因为默认都是 arg和param系列，
+   *                     如果通过 {@link org.apache.ibatis.annotations.Param}指定，那么arg没有，但是还是会保留param
+   * @param rowBounds   分页对象
+   */
   @Override
   public <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds) {
     try {
+      /* 获取当前xml节点的基本信息 statement */
       MappedStatement ms = configuration.getMappedStatement(statement);
       return executor.query(ms, wrapCollection(parameter), rowBounds, Executor.NO_RESULT_HANDLER);
     } catch (Exception e) {

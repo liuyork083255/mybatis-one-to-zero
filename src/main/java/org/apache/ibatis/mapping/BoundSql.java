@@ -32,9 +32,13 @@ import org.apache.ibatis.session.Configuration;
  * Can also have additional parameters that are created by the dynamic language (for loops, bind...).
  *
  * @author Clinton Begin
+ *
+ * one-to-zero:
+ *  BoundSql 表示动态生成的SQL语句以及相应的参数信息
  */
 public class BoundSql {
 
+  /** 最终交给数据执行的 sql 语句 */
   private final String sql;
   private final List<ParameterMapping> parameterMappings;
   private final Object parameterObject;

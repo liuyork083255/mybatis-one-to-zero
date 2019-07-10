@@ -24,6 +24,24 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
  * @author Clinton Begin
+ * one-to-zero:
+ *  参数映射器
+ *  对应 xml 文件中 <parameterMap /> 节点下面的 <parameter/>
+ *  e.g.
+ *    <parameter property="" resultMap="" javaType="" typeHandler="" jdbcType="" mode="" scale=""></parameter>
+ *
+ *
+ * 用的比较少：
+ *    <parameterMap id="" type=""  >
+ *         <parameter property="" resultMap="" javaType="" typeHandler="" jdbcType="" mode="" scale=""></parameter>
+ *         <parameter property="" resultMap="" javaType="" typeHandler="" jdbcType="" mode="" scale=""></parameter>
+ *         <parameter property="" resultMap="" javaType="" typeHandler="" jdbcType="" mode="" scale=""></parameter>
+ *    </parameterMap>
+ *  因为一般都是设置返回值，请求参数都是采用 sql 片段
+ *
+ *
+ * 一般都是用的 {@link ResultMapping}
+ *
  */
 public class ParameterMapping {
 

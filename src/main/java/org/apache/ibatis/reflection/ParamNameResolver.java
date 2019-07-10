@@ -107,6 +107,14 @@ public class ParamNameResolver {
    * ...).
    * </p>
    */
+  /**
+   * 参数重命名
+   * 例如:
+   *  Integer insertUser(Integer id,String username, String password);
+   *  默认返回的 map 结构 key 为：
+   *    arg0、arg1、arg2 param1、param2、param3
+   *    所以，如果没有给参数使用 {@link Param} 注解别名则默认只能使用 上面的命名风格 argX 和 paramX
+   */
   public Object getNamedParams(Object[] args) {
     final int paramCount = names.size();
     if (args == null || paramCount == 0) {

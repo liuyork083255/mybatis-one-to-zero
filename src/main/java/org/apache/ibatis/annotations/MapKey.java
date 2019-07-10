@@ -23,6 +23,15 @@ import java.lang.annotation.Target;
 
 /**
  * @author Clinton Begin
+ * one-to-zero;
+ *    从数据库查出多条数据，包括id和name两个字段。希望可以把结果直接用Map接收，然后通过map.get(id)方便地获取name的值
+ *    方式1
+ *      将返回值类型改为List<Map<String String>>
+ *    方式2
+ *      使用 @MapKey 注解
+ *        @Mapkey("id")
+ *        Map<String, Map<String, String>> select();
+ *
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

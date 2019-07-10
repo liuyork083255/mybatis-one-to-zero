@@ -2,6 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="liu.york.demo.demo1.Demo1UserMapper" >
 
+    <!-- 具体参考 http://www.mybatis.org/mybatis-3/zh/sqlmap-xml.html -->
+
+
     <!-- 给定命名空间的缓存配置 -->
     <cache />
 
@@ -20,6 +23,8 @@
     <insert id="" />
     <delete id="" />
     <update id="" />
+
+    <!-- http://www.mybatis.org/mybatis-3/zh/sqlmap-xml.html#select 查看官网 -->
     <select id="" />
 
 </mapper>

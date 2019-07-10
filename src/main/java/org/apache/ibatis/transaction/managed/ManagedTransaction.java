@@ -33,6 +33,10 @@ import org.apache.ibatis.transaction.Transaction;
  * @author Clinton Begin
  *
  * @see ManagedTransactionFactory
+ *
+ * one-to-zero:
+ *  ManagedTransaction 的代码实现几乎都是一个空的方法，它选择让容器来管理事务的整个生命周期
+ *
  */
 public class ManagedTransaction implements Transaction {
 

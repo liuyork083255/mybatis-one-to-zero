@@ -53,7 +53,14 @@ import org.apache.ibatis.type.TypeHandler;
  */
 public class MapperBuilderAssistant extends BaseBuilder {
 
+  /**
+   * mapper.xml 文件中的 namespace 属性值
+   */
   private String currentNamespace;
+  /**
+   * <mapper resource="demo/demo1/UserMapper.xml" />
+   * 中的 demo/demo1/UserMapper.xml 属性
+   */
   private final String resource;
   private Cache currentCache;
   private boolean unresolvedCacheRef; // issue #676
@@ -74,8 +81,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
     }
 
     if (this.currentNamespace != null && !this.currentNamespace.equals(currentNamespace)) {
-      throw new BuilderException("Wrong namespace. Expected '"
-          + this.currentNamespace + "' but found '" + currentNamespace + "'.");
+      throw new BuilderException("Wrong namespace. Expected '" + this.currentNamespace + "' but found '" + currentNamespace + "'.");
     }
 
     this.currentNamespace = currentNamespace;

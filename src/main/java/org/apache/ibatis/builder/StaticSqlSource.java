@@ -27,6 +27,10 @@ import org.apache.ibatis.session.Configuration;
  */
 public class StaticSqlSource implements SqlSource {
 
+  /**
+   * 这个就是真正执行 sql 语句
+   * 参数全部使用 ? 符号代替
+   */
   private final String sql;
   private final List<ParameterMapping> parameterMappings;
   private final Configuration configuration;

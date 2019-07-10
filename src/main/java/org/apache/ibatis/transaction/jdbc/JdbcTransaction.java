@@ -39,9 +39,13 @@ public class JdbcTransaction implements Transaction {
 
   private static final Log log = LogFactory.getLog(JdbcTransaction.class);
 
+  /** 数据库连接 */
   protected Connection connection;
+  /** 数据源 */
   protected DataSource dataSource;
+  /** 隔离级别 */
   protected TransactionIsolationLevel level;
+  /** 是否自动提交 */
   protected boolean autoCommit;
 
   public JdbcTransaction(DataSource ds, TransactionIsolationLevel desiredLevel, boolean desiredAutoCommit) {
@@ -62,6 +66,9 @@ public class JdbcTransaction implements Transaction {
     return connection;
   }
 
+  /**
+   * 调用connection.commit()来实现
+   */
   @Override
   public void commit() throws SQLException {
     if (connection != null && !connection.getAutoCommit()) {
@@ -72,6 +79,9 @@ public class JdbcTransaction implements Transaction {
     }
   }
 
+  /**
+   * 调用connection.rollback()来实现
+   */
   @Override
   public void rollback() throws SQLException {
     if (connection != null && !connection.getAutoCommit()) {
@@ -82,6 +92,9 @@ public class JdbcTransaction implements Transaction {
     }
   }
 
+  /**
+   * 调用connection.close()来实现
+   */
   @Override
   public void close() throws SQLException {
     if (connection != null) {
@@ -95,6 +108,7 @@ public class JdbcTransaction implements Transaction {
 
   protected void setDesiredAutoCommit(boolean desiredAutoCommit) {
     try {
+      /* 事务提交状态不一致 */
       if (connection.getAutoCommit() != desiredAutoCommit) {
         if (log.isDebugEnabled()) {
           log.debug("Setting autocommit to " + desiredAutoCommit + " on JDBC Connection [" + connection + "]");

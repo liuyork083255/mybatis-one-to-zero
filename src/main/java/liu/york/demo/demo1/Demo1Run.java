@@ -21,14 +21,20 @@ public class Demo1Run {
 
         SqlSession sqlSession = sqlSessionFactory.openSession();
 
+        /* 默认是手动提交，这里可以设置自定提交 */
+        sqlSession.getConnection().setAutoCommit(true);
+
         Demo1UserMapper userMapper = sqlSession.getMapper(Demo1UserMapper.class);
 
         /**
          * 调用的是 {@link org.apache.ibatis.binding.MapperProxy}
          */
-        List<Demo1User> users = userMapper.selectUser();
+//        userMapper.selectUser();
 
-        System.out.println(JSON.toJSONString(users));
+        System.out.println(JSON.toJSONString(userMapper.selectUser(1)));
+
+//        Integer count = userMapper.insertUser(3,"LiuYork3", "123456");
+//        System.out.println(count);
 
         sqlSession.close();
     }

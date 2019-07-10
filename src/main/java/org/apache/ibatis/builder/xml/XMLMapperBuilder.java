@@ -57,6 +57,10 @@ public class XMLMapperBuilder extends BaseBuilder {
   private final XPathParser parser;
   private final MapperBuilderAssistant builderAssistant;
   private final Map<String, XNode> sqlFragments;
+  /**
+   * <mapper resource="demo/demo1/UserMapper.xml" />
+   * 中的 demo/demo1/UserMapper.xml 值
+   */
   private final String resource;
 
   @Deprecated
@@ -89,12 +93,21 @@ public class XMLMapperBuilder extends BaseBuilder {
     this.resource = resource;
   }
 
+  /**
+   * 真正解析 mapper.xml 文件
+   */
   public void parse() {
     /* 判断当前资源是否被加载过 */
     if (!configuration.isResourceLoaded(resource)) {
-      /* 从 XxxMapper.xml 文件的 mapper 节点开始解析*/
+      /*
+       * 从 XxxMapper.xml 文件的 mapper 节点开始解析
+       * 逐一解析每一个标签
+       */
       configurationElement(parser.evalNode("/mapper"));
+
+      /* 将 resource 资源名称添加到 configuration 属性中 */
       configuration.addLoadedResource(resource);
+
       bindMapperForNamespace();
     }
 
@@ -107,6 +120,9 @@ public class XMLMapperBuilder extends BaseBuilder {
     return sqlFragments.get(refid);
   }
 
+  /**
+   * 从 XxxMapper.xml 文件的 <mapper/>节点开始解析
+   */
   private void configurationElement(XNode context) {
     try {
       /* 读取 namespace 属性值，如果为 null 或者为空，则抛出异常 */
@@ -114,8 +130,8 @@ public class XMLMapperBuilder extends BaseBuilder {
       if (namespace == null || namespace.equals("")) {
         throw new BuilderException("Mapper's namespace cannot be empty");
       }
-
       builderAssistant.setCurrentNamespace(namespace);
+
       /*
        * 解析cache-ref标签
        * 其他命名空间缓存配置的引用
@@ -142,6 +158,9 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
+  /**
+   * @param list  是 mapper 中的 select|insert|update|delete 节点
+   */
   private void buildStatementFromContext(List<XNode> list) {
     if (configuration.getDatabaseId() != null) {
       buildStatementFromContext(list, configuration.getDatabaseId());
@@ -151,6 +170,10 @@ public class XMLMapperBuilder extends BaseBuilder {
 
   private void buildStatementFromContext(List<XNode> list, String requiredDatabaseId) {
     for (XNode context : list) {
+      /*
+       * 创建 XMLStatementBuilder 对象，专门用于解析 select|insert|update|delete 标签的
+       * 比如 标签类型、属性resultMap、sql-body 等等
+       */
       final XMLStatementBuilder statementParser = new XMLStatementBuilder(configuration, builderAssistant, context, requiredDatabaseId);
       try {
         statementParser.parseStatementNode();
@@ -445,6 +468,7 @@ public class XMLMapperBuilder extends BaseBuilder {
     if (namespace != null) {
       Class<?> boundType = null;
       try {
+        /* 此时的命名空间是一个 mapper java接口类，这里进行加载 */
         boundType = Resources.classForName(namespace);
       } catch (ClassNotFoundException e) {
         //ignore, bound type is not required
@@ -454,7 +478,9 @@ public class XMLMapperBuilder extends BaseBuilder {
           // Spring may not know the real resource name so we set a flag
           // to prevent loading again this resource from the mapper interface
           // look at MapperAnnotationBuilder#loadXmlResource
+          /* 添加资源标识 */
           configuration.addLoadedResource("namespace:" + namespace);
+          /* 添加 mapper 到 mapperRegistry 中 */
           configuration.addMapper(boundType);
         }
       }

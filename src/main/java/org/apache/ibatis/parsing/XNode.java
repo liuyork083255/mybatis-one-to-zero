@@ -32,8 +32,20 @@ import org.w3c.dom.NodeList;
 public class XNode {
 
   private final Node node;
+  /**
+   * 标签名称
+   * select update delete insert
+   */
   private final String name;
+  /**
+   * 标签体
+   * 用户定义的 sql 语句
+   */
   private final String body;
+  /**
+   * 标签属性
+   * resultMap resultType 等等
+   */
   private final Properties attributes;
   private final Properties variables;
   private final XPathParser xpathParser;

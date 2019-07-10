@@ -30,7 +30,8 @@ import org.apache.ibatis.session.SqlSession;
  * @author Eduardo Macarron
  * one-to-zero:
  *  实现了JDK动态代理的接口 InvocationHandler
- *  在invoke方法中实现了代理方法调用的细节
+ *  在 invoke 方法中实现了代理方法调用的细节
+ *  不管在 mybatis中还是在和spring 结合中，返回的mapper实现类都是这个 MapperProxy 代理类型
  */
 public class MapperProxy<T> implements InvocationHandler, Serializable {
 
@@ -41,7 +42,10 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
   /** 接口的类型对象 */
   private final Class<T> mapperInterface;
 
-  /** 接口中方法的缓存 由 MapperProxyFactory 传递过来的 */
+  /**
+   * Mapper 接口中的每个方法都会生成一个 MapperMethod 对象, methodCache 维护着他们的对应关系
+   * 由 {@link MapperProxyFactory#methodCache} 传递过来的
+   */
   private final Map<Method, MapperMethod> methodCache;
 
   public MapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map<Method, MapperMethod> methodCache) {
@@ -66,11 +70,17 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
     } catch (Throwable t) {
       throw ExceptionUtil.unwrapThrowable(t);
     }
+
+    /* 此时的 method 是接口真正的方法，mybatis对 method 封装为 MapperMethod */
     final MapperMethod mapperMethod = cachedMapperMethod(method);
     return mapperMethod.execute(sqlSession, args);
   }
 
   private MapperMethod cachedMapperMethod(Method method) {
+    /*
+     * jdk8 的新语法，在之前如果要修改一个map的value，则必须先获取，然后重新 put
+     * 而现在不用，直接修改即可，如果这key不存在，那么第二个参数的返回值直接添加到 map 中
+     */
     return methodCache.computeIfAbsent(method, k -> new MapperMethod(mapperInterface, method, sqlSession.getConfiguration()));
   }
 

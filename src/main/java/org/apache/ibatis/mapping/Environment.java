@@ -21,10 +21,22 @@ import org.apache.ibatis.transaction.TransactionFactory;
 
 /**
  * @author Clinton Begin
+ * one-to-zero:
+ *  <environments>标签下的一个 <environment>
+ *  因为虽然可以配置多个数据源，但是一个configuration只能使用一个
  */
 public final class Environment {
+  /**
+   * 标识哪一个环境
+   */
   private final String id;
+  /**
+   * 对应的事务工厂
+   */
   private final TransactionFactory transactionFactory;
+  /**
+   * 数据源
+   */
   private final DataSource dataSource;
 
   public Environment(String id, TransactionFactory transactionFactory, DataSource dataSource) {
