@@ -130,7 +130,11 @@ public class XMLConfigBuilder extends BaseBuilder {
        */
       typeAliasesElement(root.evalNode("typeAliases"));
 
+      /*
+       * 拦截器
+       */
       pluginElement(root.evalNode("plugins"));
+
       objectFactoryElement(root.evalNode("objectFactory"));
       objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
       reflectorFactoryElement(root.evalNode("reflectorFactory"));
@@ -260,10 +264,18 @@ public class XMLConfigBuilder extends BaseBuilder {
   private void pluginElement(XNode parent) throws Exception {
     if (parent != null) {
       for (XNode child : parent.getChildren()) {
+        /* 获取拦截器具体类名：liu.york.demo.demo2.Demo2Interceptor1 */
         String interceptor = child.getStringAttribute("interceptor");
+
+        /* 获取拦截器下的 property 节点 */
         Properties properties = child.getChildrenAsProperties();
+
+        /* 加载类，然后实例化 */
         Interceptor interceptorInstance = (Interceptor) resolveClass(interceptor).newInstance();
+
+        /* 调用拦截方法，设置属性值 */
         interceptorInstance.setProperties(properties);
+
         configuration.addInterceptor(interceptorInstance);
       }
     }

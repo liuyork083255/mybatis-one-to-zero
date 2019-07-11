@@ -20,11 +20,24 @@ import java.lang.reflect.Method;
 
 /**
  * @author Clinton Begin
+ * one-to-zero:
+ *  mybatis 会将真实的被代理的对象
  */
 public class Invocation {
 
+  /**
+   * 真正目标对象，也就是四大对象
+   */
   private final Object target;
+
+  /**
+   * 真正被拦截的目标方法
+   */
   private final Method method;
+
+  /**
+   * 方法对应的参数
+   */
   private final Object[] args;
 
   public Invocation(Object target, Method method, Object[] args) {
@@ -45,6 +58,9 @@ public class Invocation {
     return args;
   }
 
+  /**
+   * 执行被拦截的目标的方法
+   */
   public Object proceed() throws InvocationTargetException, IllegalAccessException {
     return method.invoke(target, args);
   }

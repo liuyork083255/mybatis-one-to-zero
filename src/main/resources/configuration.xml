@@ -19,6 +19,7 @@
         <setting name="" value=""/>
     </settings>
 
+    <!-- 类型别名是为 Java 类型设置一个短的名字。 它只和 XML 配置有关，存在的意义仅在于用来减少类完全限定名的冗余 详见官网：http://www.mybatis.org/mybatis-3/zh/configuration.html#typeAliases -->
     <typeAliases>
         <typeAlias type="liu.york.demo.demo1.Demo1User" alias="demo1User" />
         <!-- 它还有一个 <package name="com.ys.po" /> 标签，在没有注解的情况下，会使用 Bean 的首字母小写的非限定类名来作为它的别名 -->
@@ -35,9 +36,10 @@
         <package name="" />
     </typeHandlers>
 
-    <!-- 类型别名是为 Java 类型设置一个短的名字。 它只和 XML 配置有关，存在的意义仅在于用来减少类完全限定名的冗余 详见官网：http://www.mybatis.org/mybatis-3/zh/configuration.html#typeAliases -->
+    <!-- 在 mybatis 单独使用的时候，拦截器需要通过配合方式告知 mybatis -->
     <plugins>
         <plugin interceptor="liu.york.mybatis.study.plugin.MyInterceptor">
+            <!-- 如果拦截器需要外接传递参数进去，那么就可以通过 property 标签传入 -->
             <property name="username" value="LiuYork"/>
             <property name="password" value="123456"/>
         </plugin>

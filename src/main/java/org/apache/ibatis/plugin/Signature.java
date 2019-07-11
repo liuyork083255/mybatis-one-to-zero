@@ -27,9 +27,22 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({})
 public @interface Signature {
+  /**
+   * 四大对象的类型
+   *    {@link org.apache.ibatis.executor.Executor}
+   *    {@link org.apache.ibatis.executor.statement.StatementHandler}
+   *    {@link org.apache.ibatis.executor.parameter.ParameterHandler}
+   *    {@link org.apache.ibatis.executor.resultset.ResultSetHandler}
+   */
   Class<?> type();
 
+  /**
+   * 四大对象的方法名
+   */
   String method();
 
+  /**
+   * 方法对应的参数类型
+   */
   Class<?>[] args();
 }

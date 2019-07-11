@@ -23,6 +23,8 @@ import java.lang.annotation.Target;
 
 /**
  * @author Clinton Begin
+ * one-to-zero:
+ *  定义拦截器类型，需要结合 {@link Signature}
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

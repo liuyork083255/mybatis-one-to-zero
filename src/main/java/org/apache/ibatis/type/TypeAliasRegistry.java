@@ -116,11 +116,14 @@ public class TypeAliasRegistry {
         return null;
       }
       // issue #748
+      /* 将参数 string 全部转为小写 */
       String key = string.toLowerCase(Locale.ENGLISH);
       Class<T> value;
+      /* 查看是否存在该类型 */
       if (typeAliases.containsKey(key)) {
         value = (Class<T>) typeAliases.get(key);
       } else {
+        /* 不存在直接加载 通过 class.forName */
         value = (Class<T>) Resources.classForName(string);
       }
       return value;

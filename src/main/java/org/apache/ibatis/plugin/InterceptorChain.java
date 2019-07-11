@@ -24,10 +24,19 @@ import java.util.List;
  */
 public class InterceptorChain {
 
+  /**
+   * 保存着所有的拦截器
+   */
   private final List<Interceptor> interceptors = new ArrayList<>();
 
+  /**
+   * SqlSession 的四大对象在创建完成后都不是直接返回，它们都是通过调用这个方法进行一个包装
+   */
   public Object pluginAll(Object target) {
     for (Interceptor interceptor : interceptors) {
+      /**
+       * 默认都是调用 {@link Plugin#wrap(Object, Interceptor)}
+       */
       target = interceptor.plugin(target);
     }
     return target;

@@ -262,6 +262,7 @@ public class Configuration {
 
   /**
    * 拦截器的链
+   * 所有的拦截器都会被加入到这个集合中
    */
   protected final InterceptorChain interceptorChain = new InterceptorChain();
 
@@ -748,7 +749,7 @@ public class Configuration {
       executor = new SimpleExecutor(this, transaction);
     }
 
-    /* 如果开启了缓存，那么返回缓存执行器 */
+    /* 如果开启了缓存，那么返回缓存执行器，并将真实的执行器赋值给 delegate */
     if (cacheEnabled) {
       executor = new CachingExecutor(executor);
     }
