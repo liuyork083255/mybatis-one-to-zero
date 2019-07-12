@@ -37,6 +37,8 @@
     <!-- mapping 文件路径配置 -->
     <mappers>
         <mapper resource="demo/demo2/UserMapper.xml" />
+        <!--<package name="liu.york.demo.demo2" />-->
+        <!--<mapper class="liu.york.demo.demo2.Demo2UserMapper" />-->
     </mappers>
 
 </configuration>

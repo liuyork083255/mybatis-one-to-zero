@@ -266,8 +266,7 @@ public class MapperMethod {
           name = null;
           type = SqlCommandType.FLUSH;
         } else {
-          throw new BindingException("Invalid bound statement (not found): "
-              + mapperInterface.getName() + "." + methodName);
+          throw new BindingException("Invalid bound statement (not found): " + mapperInterface.getName() + "." + methodName);
         }
       } else {
         name = ms.getId();
@@ -289,6 +288,7 @@ public class MapperMethod {
     private MappedStatement resolveMappedStatement(Class<?> mapperInterface, String methodName, Class<?> declaringClass, Configuration configuration) {
       /* 类全名 + 方法名称  */
       String statementId = mapperInterface.getName() + "." + methodName;
+
       /* 如果全局配置包含了则直接返回 */
       if (configuration.hasStatement(statementId)) {
         return configuration.getMappedStatement(statementId);
@@ -301,8 +301,7 @@ public class MapperMethod {
        */
       for (Class<?> superInterface : mapperInterface.getInterfaces()) {
         if (declaringClass.isAssignableFrom(superInterface)) {
-          MappedStatement ms = resolveMappedStatement(superInterface, methodName,
-              declaringClass, configuration);
+          MappedStatement ms = resolveMappedStatement(superInterface, methodName, declaringClass, configuration);
           if (ms != null) {
             return ms;
           }

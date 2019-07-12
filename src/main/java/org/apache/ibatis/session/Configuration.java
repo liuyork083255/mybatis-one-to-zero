@@ -34,6 +34,7 @@ import org.apache.ibatis.builder.ResultMapResolver;
 import org.apache.ibatis.builder.annotation.MethodResolver;
 import org.apache.ibatis.builder.xml.XMLStatementBuilder;
 import org.apache.ibatis.cache.Cache;
+import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.cache.decorators.FifoCache;
 import org.apache.ibatis.cache.decorators.LruCache;
 import org.apache.ibatis.cache.decorators.SoftCache;
@@ -276,7 +277,13 @@ public class Configuration {
    */
   protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>("Mapped Statements collection")
       .conflictMessageProducer((savedValue, targetValue) -> ". please check " + savedValue.getResource() + " and " + targetValue.getResource());
+
+  /**
+   * 二级缓存 cache
+   * key：mapper.xml 文件的 namespace
+   */
   protected final Map<String, Cache> caches = new StrictMap<>("Caches collection");
+
   protected final Map<String, ResultMap> resultMaps = new StrictMap<>("Result Maps collection");
   protected final Map<String, ParameterMap> parameterMaps = new StrictMap<>("Parameter Maps collection");
   protected final Map<String, KeyGenerator> keyGenerators = new StrictMap<>("Key Generators collection");
@@ -699,6 +706,7 @@ public class Configuration {
 
   /**
    * 创建 ParameterHandler 处理器
+   * 和spring测试下来，每次请求一次查询，四大对象都要新建
    */
   public ParameterHandler newParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
     ParameterHandler parameterHandler = mappedStatement.getLang().createParameterHandler(mappedStatement, parameterObject, boundSql);
@@ -708,6 +716,7 @@ public class Configuration {
 
   /**
    * 创建 ResultSetHandler 处理器
+   * 和spring测试下来，每次请求一次查询，四大对象都要新建
    */
   public ResultSetHandler newResultSetHandler(Executor executor, MappedStatement mappedStatement, RowBounds rowBounds, ParameterHandler parameterHandler,
       ResultHandler resultHandler, BoundSql boundSql) {
@@ -719,6 +728,7 @@ public class Configuration {
   /**
    * 创建 StatementHandler 处理器
    * configuration 不会创建具体的哪一种 StatementHandler，而是通过创建 RoutingStatementHandler 来自动路由
+   * 和spring测试下来，每次请求一次查询，四大对象都要新建
    */
   public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
     /* 创建 RoutingStatementHandler */
@@ -736,6 +746,7 @@ public class Configuration {
 
   /**
    * 创建执行器,默认都是创建 缓存执行器 {@link #cacheEnabled}
+   * 和spring测试下来，每次请求一次查询，四大对象都要新建
    */
   public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
     executorType = executorType == null ? defaultExecutorType : executorType;
@@ -749,7 +760,10 @@ public class Configuration {
       executor = new SimpleExecutor(this, transaction);
     }
 
-    /* 如果开启了缓存，那么返回缓存执行器，并将真实的执行器赋值给 delegate */
+    /**
+     * 二级缓存全局开关默认开启，所以对executor进行封装
+     * 详见{@link CachingExecutor#query(MappedStatement, Object, RowBounds, ResultHandler, CacheKey, BoundSql)}
+     */
     if (cacheEnabled) {
       executor = new CachingExecutor(executor);
     }

@@ -35,9 +35,20 @@ import org.apache.ibatis.transaction.Transaction;
 /**
  * @author Clinton Begin
  * @author Eduardo Macarron
+ * one-to-zero:
+ *  这个 Executor 执行器是专门用于处理二级缓存使用的，在 {@link org.apache.ibatis.session.Configuration}中创建 executor 都会判断
+ *  全局二级缓存是否开启，如果开启就会进行一次对真正的 executor 包装，也就是属性 delegate
+ *
+ *  note：
+ *    这个类不是处理一级缓存的，一级缓存是在 {@link BaseExecutor#query(MappedStatement, Object, RowBounds, ResultHandler, CacheKey, BoundSql)} 处理的
+ *
  */
+@SuppressWarnings("all")
 public class CachingExecutor implements Executor {
 
+  /**
+   * 缓存执行器只是对基本三大执行器进行了一个封装，而 delegate 就是原始的对象
+   */
   private final Executor delegate;
   private final TransactionalCacheManager tcm = new TransactionalCacheManager();
 
@@ -65,6 +76,9 @@ public class CachingExecutor implements Executor {
     }
   }
 
+  /**
+   * 是否关闭了executor
+   */
   @Override
   public boolean isClosed() {
     return delegate.isClosed();
@@ -72,14 +86,18 @@ public class CachingExecutor implements Executor {
 
   @Override
   public int update(MappedStatement ms, Object parameterObject) throws SQLException {
+    /* 是否需要更缓存 */
     flushCacheIfRequired(ms);
+    /* 更新数据库数据 */
     return delegate.update(ms, parameterObject);
   }
 
   @Override
   public <E> List<E> query(MappedStatement ms, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
     BoundSql boundSql = ms.getBoundSql(parameterObject);
+    /* 创建缓存值 */
     CacheKey key = createCacheKey(ms, parameterObject, rowBounds, boundSql);
+    /* 获取记录 */
     return query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
   }
 
@@ -92,13 +110,16 @@ public class CachingExecutor implements Executor {
   @Override
   public <E> List<E> query(MappedStatement ms, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql)
       throws SQLException {
+    /* 查看 mapper.xml 文件中是否配置开启了二级缓存 */
     Cache cache = ms.getCache();
+    /* 如果缓存不为空 */
     if (cache != null) {
       flushCacheIfRequired(ms);
       if (ms.isUseCache() && resultHandler == null) {
         ensureNoOutParams(ms, boundSql);
-        @SuppressWarnings("unchecked")
+        /* 从缓存中获取数据 */
         List<E> list = (List<E>) tcm.getObject(cache, key);
+        /* 为空执行一次，将结果保存到缓存中 */
         if (list == null) {
           list = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
           tcm.putObject(cache, key, list); // issue #578 and #116

@@ -53,6 +53,9 @@ public final class MappedStatement {
   private ResultSetType resultSetType;
   /** {@link org.apache.ibatis.scripting.defaults.RawSqlSource } */
   private SqlSource sqlSource;
+  /**
+   * 如果在 mapper.xml 文件中配置了 <cache /> 节点，那么就会将信息保存在这个属性中
+   */
   private Cache cache;
   private ParameterMap parameterMap;
   private List<ResultMap> resultMaps;

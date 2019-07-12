@@ -95,6 +95,7 @@ public class XMLMapperBuilder extends BaseBuilder {
 
   /**
    * 真正解析 mapper.xml 文件
+   * 在和spring结合中，也是调用这个方法进行解析 mapper.xml 文件
    */
   public void parse() {
     /* 判断当前资源是否被加载过 */

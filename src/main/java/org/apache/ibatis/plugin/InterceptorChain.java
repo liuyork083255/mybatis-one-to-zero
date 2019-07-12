@@ -36,6 +36,8 @@ public class InterceptorChain {
     for (Interceptor interceptor : interceptors) {
       /**
        * 默认都是调用 {@link Plugin#wrap(Object, Interceptor)}
+       * 如果有多个拦截器对同一个类型进行进行拦截，那么这里的 target 其实就是一个代理对象了，也就是代理对象又被代理了
+       * 因为都是基于接口进行代理的，所以底层真实类型都无所谓了
        */
       target = interceptor.plugin(target);
     }

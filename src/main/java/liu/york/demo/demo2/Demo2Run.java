@@ -17,9 +17,9 @@ public class Demo2Run {
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream,"db1");
 
         SqlSession sqlSession = sqlSessionFactory.openSession();
-
         Demo2UserMapper userMapper = sqlSession.getMapper(Demo2UserMapper.class);
 
+        System.out.println(JSON.toJSONString(userMapper.selectUser(1)));
         System.out.println(JSON.toJSONString(userMapper.selectUser(1)));
 
         sqlSession.close();

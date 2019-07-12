@@ -43,7 +43,10 @@ import org.apache.ibatis.reflection.ExceptionUtil;
  */
 public class Plugin implements InvocationHandler {
 
-  /** 被拦截目标对象，也就是原始的四大对象之一 */
+  /**
+   * 被拦截目标对象，也就是原始的四大对象之一
+   * 这里这么说可能不准确了，因为可能存在多层代理，所以这个 target 可能是前面一个拦截器的代理类
+   */
   private final Object target;
 
   /** 用户自定义拦截器 */
@@ -61,7 +64,7 @@ public class Plugin implements InvocationHandler {
   /**
    * 封装代理对象
    *
-   * @param target    四大对象之一
+   * @param target    四大对象之一，这里这么说可能不准确了，因为可能存在多层代理，所以这个 target 可能是前面一个拦截器的代理类
    * @param interceptor 用户自定义拦截器
    */
   public static Object wrap(Object target, Interceptor interceptor) {

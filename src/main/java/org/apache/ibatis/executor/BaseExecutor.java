@@ -56,9 +56,16 @@ public abstract class BaseExecutor implements Executor {
    */
   protected Transaction transaction;
 
+  /**
+   * 这个类其实就是 {@link CachingExecutor}
+   */
   protected Executor wrapper;
 
   protected ConcurrentLinkedQueue<DeferredLoad> deferredLoads;
+
+  /**
+   * 本地一级缓存
+   */
   protected PerpetualCache localCache;
   protected PerpetualCache localOutputParameterCache;
   protected Configuration configuration;
@@ -153,10 +160,14 @@ public abstract class BaseExecutor implements Executor {
     List<E> list;
     try {
       queryStack++;
+      /*
+       * 进行缓存key查找，如果有则直接返回
+       */
       list = resultHandler == null ? (List<E>) localCache.getObject(key) : null;
       if (list != null) {
         handleLocallyCachedOutputParameters(ms, key, parameter, boundSql);
       } else {
+        /* 如果缓存中没有则查询数据库，并且将查询结果存入缓存 */
         list = queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);
       }
     } finally {
@@ -168,6 +179,10 @@ public abstract class BaseExecutor implements Executor {
       }
       // issue #601
       deferredLoads.clear();
+      /**
+       * 如果缓存级别是 STATEMENT 则不进行 session 一级缓存，而是直接清空
+       * {@link LocalCacheScope}
+       */
       if (configuration.getLocalCacheScope() == LocalCacheScope.STATEMENT) {
         // issue #482
         clearLocalCache();
@@ -195,6 +210,12 @@ public abstract class BaseExecutor implements Executor {
     }
   }
 
+  /**
+   * 根据当前查询创建缓存 key
+   * 使用[namespace:sql:参数]作为key
+   * e.g.
+   *  -1242243203:1146242777:winclpt.bean.userMapper.getUser:0:2147483647:select * from user where id=?:19
+   */
   @Override
   public CacheKey createCacheKey(MappedStatement ms, Object parameterObject, RowBounds rowBounds, BoundSql boundSql) {
     if (closed) {
@@ -330,6 +351,7 @@ public abstract class BaseExecutor implements Executor {
     } finally {
       localCache.removeObject(key);
     }
+    /* 将结果写入本地缓存 */
     localCache.putObject(key, list);
     if (ms.getStatementType() == StatementType.CALLABLE) {
       localOutputParameterCache.putObject(key, parameter);

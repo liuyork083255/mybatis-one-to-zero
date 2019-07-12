@@ -27,6 +27,7 @@ public class Invocation {
 
   /**
    * 真正目标对象，也就是四大对象
+   * 这里这么说可能不准确了，因为可能存在多层代理，所以这个 target 可能是前面一个拦截器的代理类
    */
   private final Object target;
 

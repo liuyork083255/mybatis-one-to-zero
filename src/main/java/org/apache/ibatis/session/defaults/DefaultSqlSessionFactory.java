@@ -88,7 +88,8 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
   }
 
   /**
-   * 获取一个 sqlSession
+   * 新建一个 sqlSession
+   * 也就是意味着 sqlSession 对应的四大对象也要新建
    *
    * @param execType  执行类型，ExecutorType主要有三种类型：SIMPLE, REUSE, BATCH，默认是SIMPLE，都在枚举类ExecutorType里面
    * @param level 事务隔离级别，都在枚举类TransactionIsolationLevel中定义

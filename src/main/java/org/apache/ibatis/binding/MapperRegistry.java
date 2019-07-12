@@ -115,7 +115,7 @@ public class MapperRegistry {
   }
 
   /**
-   * @since 3.2.2
+   * 递归解析指定的包名 packageName 下的 mapper
    */
   public void addMappers(String packageName, Class<?> superType) {
     ResolverUtil<Class<?>> resolverUtil = new ResolverUtil<>();
@@ -127,7 +127,7 @@ public class MapperRegistry {
   }
 
   /**
-   * @since 3.2.2
+   * 以包名方式添加 mapper
    */
   public void addMappers(String packageName) {
     addMappers(packageName, Object.class);

@@ -159,6 +159,10 @@ public class DefaultSqlSession implements SqlSession {
       /* 获取当前xml节点的基本信息 statement */
       MappedStatement ms = configuration.getMappedStatement(statement);
 
+      /**
+       * 这里应该是进入的{@link org.apache.ibatis.executor.CachingExecutor}，因为在 {@link Configuration#cacheEnabled} 为true
+       * 意味着所有 executor 都会被 CachingExecutor 封装
+       */
       return executor.query(ms, wrapCollection(parameter), rowBounds, Executor.NO_RESULT_HANDLER);
     } catch (Exception e) {
       throw ExceptionFactory.wrapException("Error querying database.  Cause: " + e, e);
