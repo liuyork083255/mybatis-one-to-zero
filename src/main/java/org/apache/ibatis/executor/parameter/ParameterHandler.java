@@ -23,7 +23,9 @@ import java.sql.SQLException;
  *
  * @author Clinton Begin
  * one-to-zero:
- *  处理 SQL 参数
+ *  处理 SQL 参数，参数映射是涉及到两个步骤，
+ *  一是将查询请求参数映射到 prepareStatement 中，这步骤就是 ParameterHandler 的工作
+ *  二是将查询结果映射到结果集中，这是 ResultSetHandler 的工作
  */
 public interface ParameterHandler {
 

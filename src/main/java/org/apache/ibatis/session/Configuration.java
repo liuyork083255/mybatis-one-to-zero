@@ -267,6 +267,10 @@ public class Configuration {
    */
   protected final InterceptorChain interceptorChain = new InterceptorChain();
 
+  /**
+   * java-jdbc 类型转换器
+   * 全局都是用的一个对象，里面封装了默认的转换器和用户自定义的转换器
+   */
   protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
   protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
   protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
@@ -608,6 +612,9 @@ public class Configuration {
     this.variables = variables;
   }
 
+  /**
+   * 返回 java-jdbc 映射器
+   */
   public TypeHandlerRegistry getTypeHandlerRegistry() {
     return typeHandlerRegistry;
   }

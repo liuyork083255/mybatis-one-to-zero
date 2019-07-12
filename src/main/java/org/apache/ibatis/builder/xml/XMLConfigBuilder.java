@@ -494,6 +494,7 @@ public class XMLConfigBuilder extends BaseBuilder {
   /**
    * Java数据类型和数据库数据类型是有区别的，而我们想通过Java代码来操作数据库或从数据库中取值的时候，必须要进行类型的转换。而  typeHandlers 便是来完成这一工作的
    * 如何使用可以参考官网：http://www.mybatis.org/mybatis-3/zh/configuration.html#typeHandlers
+   * {@link org.apache.ibatis.type.TypeHandlerRegistry}
    */
   private void typeHandlerElement(XNode parent) {
     if (parent != null) {
@@ -505,9 +506,11 @@ public class XMLConfigBuilder extends BaseBuilder {
           String javaTypeName = child.getStringAttribute("javaType");
           String jdbcTypeName = child.getStringAttribute("jdbcType");
           String handlerTypeName = child.getStringAttribute("handler");
+
           Class<?> javaTypeClass = resolveClass(javaTypeName);
           JdbcType jdbcType = resolveJdbcType(jdbcTypeName);
           Class<?> typeHandlerClass = resolveClass(handlerTypeName);
+
           if (javaTypeClass != null) {
             if (jdbcType == null) {
               typeHandlerRegistry.register(javaTypeClass, typeHandlerClass);

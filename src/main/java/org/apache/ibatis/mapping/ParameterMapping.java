@@ -25,7 +25,8 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 /**
  * @author Clinton Begin
  * one-to-zero:
- *  参数映射器
+ *  参数映射器，主要解决请求参数的映射，而不是结果集的映射
+ *
  *  对应 xml 文件中 <parameterMap /> 节点下面的 <parameter/>
  *  e.g.
  *    <parameter property="" resultMap="" javaType="" typeHandler="" jdbcType="" mode="" scale=""></parameter>
@@ -38,20 +39,40 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
  *         <parameter property="" resultMap="" javaType="" typeHandler="" jdbcType="" mode="" scale=""></parameter>
  *    </parameterMap>
  *  因为一般都是设置返回值，请求参数都是采用 sql 片段
+ *  这种方式用的比较少了，基本都是通过 {@link org.apache.ibatis.annotations.Param} 注解，其实也是通过这个 ParameterMapping 完成映射的
  *
- *
- * 一般都是用的 {@link ResultMapping}
+ *  可以理解为一个 mapper-sql 中的 #{} 就是一个 ParameterMapping
+ *  #{username, jdbcType=Xxx, javaType=Yyy, typeHandler=Zzz}
  *
  */
 public class ParameterMapping {
 
   private Configuration configuration;
 
+  /**
+   * 如果当前sql中出现的是 #{username,jdbcType=Xxx}，则 property 就是 username
+   * 如果是使用的 parameterMap 标签，那么该值就是这个标签下的 parameter 标签的 property 属性值
+   *
+   */
   private String property;
+
   private ParameterMode mode;
+
+  /**
+   * javaType 类型
+   * javaType=Yyy
+   */
   private Class<?> javaType = Object.class;
+  /**
+   * 对应数据库字段类型
+   * jdbcType=Xxx
+   */
   private JdbcType jdbcType;
   private Integer numericScale;
+  /**
+   * 对应的映射解析器
+   * typeHandler=Zzz
+   */
   private TypeHandler<?> typeHandler;
   private String resultMapId;
   private String jdbcTypeName;

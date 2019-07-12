@@ -36,6 +36,7 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
+@SuppressWarnings("all")
 public class DefaultParameterHandler implements ParameterHandler {
 
   private final TypeHandlerRegistry typeHandlerRegistry;
@@ -60,12 +61,20 @@ public class DefaultParameterHandler implements ParameterHandler {
 
   /**
    * 从 parameterObject 中取到参数，然后使用typeHandler（注册在Configuration中）进行参数处理
+   *
    */
   @Override
   public void setParameters(PreparedStatement ps) {
     ErrorContext.instance().activity("setting parameters").object(mappedStatement.getParameterMap().getId());
 
+    /*
+     * 获取本次查询sql语句的请求参数
+     * 比如：select * from user where id = #{id,jdbcType=x,javaType=y,typeHandler=z} and name = #{name, jdbcType,javaType,typeHandler}
+     *      这里就会有两个 ParameterMapping，每一个都是对 #{} 的封装
+     */
     List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
+
+    /* 如果有参数，说明本次操作的 sql 语句有类似 #{name} 的符号 */
     if (parameterMappings != null) {
       for (int i = 0; i < parameterMappings.size(); i++) {
         ParameterMapping parameterMapping = parameterMappings.get(i);
@@ -91,6 +100,7 @@ public class DefaultParameterHandler implements ParameterHandler {
             jdbcType = configuration.getJdbcTypeForNull();
           }
           try {
+            /* 通过 handler 给 PreparedStatement 设置参数 */
             typeHandler.setParameter(ps, i + 1, value, jdbcType);
           } catch (TypeException | SQLException e) {
             throw new TypeException("Could not set parameters for mapping: " + parameterMapping + ". Cause: " + e, e);

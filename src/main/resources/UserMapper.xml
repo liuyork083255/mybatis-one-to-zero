@@ -6,7 +6,9 @@
 
 
     <!-- 给定命名空间的缓存配置，也即是二级缓存使用实例 -->
-    <cache eviction="LRU" type="具体的实现类路劲全名" flushInterval="默认刷新时间" size="最多缓存多少个key数据" readOnly="是否只读" />
+    <cache eviction="LRU" type="具体的实现类路劲全名" flushInterval="默认刷新时间" size="最多缓存多少个key数据" readOnly="是否只读" >
+        <property name="" value="" />
+    </cache>
 
     <!-- 其他命名空间缓存配置的引用 -->
     <cache-ref namespace=""/>

@@ -34,6 +34,11 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 public abstract class BaseBuilder {
   protected final Configuration configuration;
   protected final TypeAliasRegistry typeAliasRegistry;
+
+  /**
+   * java-jdbc 类型转换器
+   * 这里的 typeHandlerRegistry 其实就是 {@link Configuration#typeHandlerRegistry}
+   */
   protected final TypeHandlerRegistry typeHandlerRegistry;
 
   public BaseBuilder(Configuration configuration) {

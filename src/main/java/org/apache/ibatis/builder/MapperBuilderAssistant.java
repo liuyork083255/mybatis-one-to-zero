@@ -62,6 +62,9 @@ public class MapperBuilderAssistant extends BaseBuilder {
    * 中的 demo/demo1/UserMapper.xml 属性
    */
   private final String resource;
+  /**
+   * 当前这mapper对应的二级缓存
+   */
   private Cache currentCache;
   private boolean unresolvedCacheRef; // issue #676
 
@@ -126,6 +129,9 @@ public class MapperBuilderAssistant extends BaseBuilder {
     }
   }
 
+  /**
+   * 创建一个缓存节点，并且将这个节点保存到全局配置 {@link Configuration#caches}
+   */
   public Cache useNewCache(Class<? extends Cache> typeClass,
       Class<? extends Cache> evictionClass,
       Long flushInterval,

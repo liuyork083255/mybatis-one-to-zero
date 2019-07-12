@@ -3,7 +3,7 @@
 <mapper namespace="liu.york.demo.demo2.Demo2UserMapper" >
 
     <select id="selectUser"  resultType="liu.york.demo.demo2.Demo2User">
-        select * from user where id = #{id}
+        select * from user where id = #{id, javaType=java.lang.String, jdbcType=VARCHAR,typeHandler=org.apache.ibatis.type.ShortTypeHandler}
     </select>
 
 

@@ -40,7 +40,14 @@ public class BoundSql {
 
   /** 最终交给数据执行的 sql 语句 */
   private final String sql;
+
+  /**
+   * 如果这个执行的 sql 需要参数，那么全部都封装在这个属性值中
+   * 这个参数完全可以由用户指定：
+   *  #{username, jdbcType=Xxx, javaType=Yyy, typeHandler=Zzz}
+   */
   private final List<ParameterMapping> parameterMappings;
+
   private final Object parameterObject;
   private final Map<String, Object> additionalParameters;
   private final MetaObject metaParameters;

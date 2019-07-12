@@ -59,6 +59,9 @@ public class SimpleExecutor extends BaseExecutor {
     Statement stmt = null;
     try {
       Configuration configuration = ms.getConfiguration();
+      /*
+       * 创建 StatementHandler 对象，同时会将 ParameterHandler 和 ResultSetHandler 实例化
+       */
       StatementHandler handler = configuration.newStatementHandler(wrapper, ms, parameter, rowBounds, resultHandler, boundSql);
       stmt = prepareStatement(handler, ms.getStatementLog());
       /* 查询并且处理返回结果 */
