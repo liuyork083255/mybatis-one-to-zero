@@ -107,6 +107,10 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
       /* 创建一个事务 */
       tx = transactionFactory.newTransaction(environment.getDataSource(), level, autoCommit);
 
+      /*
+       * 这里虽然将 tx 交给了 Executor，但是在测试下来，在操作数据库接口完成后，并没有主动提交，需要手动设置 commit
+       * 但是在和spring结合以后，就不用手动管理了，spring会替我们管理
+       */
       final Executor executor = configuration.newExecutor(tx, execType);
 
       return new DefaultSqlSession(configuration, executor, autoCommit);
