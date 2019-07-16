@@ -72,6 +72,10 @@ import java.sql.SQLException;
  *  注意：和数据源配置一样，通常项目中我们不会单独使用 mybatis 来管理事务。比如选择框架 Spring + mybatis，
  *  这时候没有必要配置事务管理器， 因为 Spring 模块会使用自带的管理器来覆盖前面的配置
  *
+ *  事务类 Transaction 最主要的一个功能就是获取连接，根据 {@link org.apache.ibatis.mapping.Environment} 对象
+ *  获取连接的操作都是在准备执行 sql 的时候
+ *    {@link org.apache.ibatis.executor.SimpleExecutor#prepareStatement}
+ *
  */
 public interface Transaction {
 

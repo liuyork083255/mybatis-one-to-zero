@@ -81,6 +81,7 @@ public class SqlSessionFactoryBuilder {
   }
 
   /**
+   * 这个方法被调用一般都是 mybatis 单独使用
    *
    * @param inputStream mybatis核心配置文件流
    * @param environment 对应的加载环境，详见 resources/configuration.xml 文件
@@ -108,10 +109,11 @@ public class SqlSessionFactoryBuilder {
     }
   }
 
+  /**
+   * 这个方法被调用的机制就是和 spring 结合
+   * spring 会创建好 Configuration 对象，然后会调用这个方法创建 SqlSessionFactory
+   */
   public SqlSessionFactory build(Configuration config) {
-    /**
-     * 原生 mybatis 中 DefaultSqlSessionFactory 是 SqlSessionFactory 的默认实现
-     */
     return new DefaultSqlSessionFactory(config);
   }
 

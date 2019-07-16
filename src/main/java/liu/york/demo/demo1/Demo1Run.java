@@ -22,7 +22,7 @@ public class Demo1Run {
         SqlSession sqlSession = sqlSessionFactory.openSession();
 
         /* 默认是手动提交，这里可以设置自定提交 */
-        sqlSession.getConnection().setAutoCommit(true);
+//        sqlSession.getConnection().setAutoCommit(true);
 
         Demo1UserMapper userMapper = sqlSession.getMapper(Demo1UserMapper.class);
 

@@ -25,7 +25,12 @@ import org.apache.ibatis.session.SqlSession;
 /**
  * @author Lasse Voss
  * one-to-zero:
- *  这个类负责创建具体 Mapper 接口代理对象的工厂类
+ *  这个类负责创建具体 Mapper 接口实现类
+ *  每一个 Mapper 接口都会对应一个工厂类 MapperProxyFactory
+ *  不管是 mybatis 还是和 spring 结合，在初始化的时候添加 mapper 都会调用 {@link MapperRegistry#addMapper(Class)} 添加对应工厂
+ *
+ *  工厂 MapperProxyFactory 被创建后，不会主动创建具体的 mapper 实例，而是用户主动获取或者是 spring 主动注入，才会调用下面的 {@link #newInstance(MapperProxy)}
+ *
  */
 @SuppressWarnings("all")
 public class MapperProxyFactory<T> {
