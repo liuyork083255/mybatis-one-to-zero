@@ -2,6 +2,7 @@ package liu.york.demo.demo1;
 
 import com.alibaba.fastjson.JSON;
 import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
@@ -20,6 +21,7 @@ public class Demo1Run {
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream,"db1");
 
         SqlSession sqlSession = sqlSessionFactory.openSession();
+        Configuration configuration = sqlSession.getConfiguration();
 
         /* 默认是手动提交，这里可以设置自定提交 */
 //        sqlSession.getConnection().setAutoCommit(true);

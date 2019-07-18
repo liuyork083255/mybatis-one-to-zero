@@ -218,7 +218,20 @@ public class Configuration {
    */
   protected AutoMappingUnknownColumnBehavior autoMappingUnknownColumnBehavior = AutoMappingUnknownColumnBehavior.NONE;
 
+  /**
+   * 这个变量用于保存用户注入的属性值 key-value
+   * 注入方式：
+   *      <properties resource="jdbc.properties">
+   *        <property name="username" value="LiuYork" />
+   *      </properties>
+   * 如果在 spring 项目中，可以通过 mybatis.configuration.variables.key = value 注入
+   *
+   * 作用范围：
+   *  最有效的就是在 mapper-xml 文件中使用 ${}，比如 <if test="'${dbType}' == 'oracle'"> </if>
+   *
+   */
   protected Properties variables = new Properties();
+
   protected ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
   /**
    * MyBatis 每次创建结果对象的新实例时，它都会使用一个对象工厂（ObjectFactory）实例来完成。
